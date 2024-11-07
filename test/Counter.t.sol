@@ -2,23 +2,20 @@
 pragma solidity ^0.8.13;
 
 import {Test, console} from "forge-std/Test.sol";
-import {Counter} from "../src/Counter.sol";
+import {Counter, SOME_SLOT} from "../src/Counter.sol";
 
 contract CounterTest is Test {
     Counter public counter;
 
-    function setUp() public {
-        counter = new Counter();
-        counter.setNumber(0);
-    }
-
-    function test_Increment() public {
-        counter.increment();
-        assertEq(counter.number(), 1);
-    }
-
-    function testFuzz_SetNumber(uint256 x) public {
-        counter.setNumber(x);
-        assertEq(counter.number(), x);
+    function testBytecode() public pure {
+        bytes memory creation = type(Counter).creationCode;
+        uint256 length = creation.length;
+        uint256 offset;
+        bytes32 lastBytes;
+        assembly {
+            offset := add(creation, length)
+            lastBytes := mload(offset)
+        }
+        assertEq(lastBytes, SOME_SLOT);
     }
 }

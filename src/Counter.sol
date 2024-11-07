@@ -1,14 +1,19 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-contract Counter {
-    uint256 public number;
+bytes32 constant SOME_SLOT = 0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa;
 
-    function setNumber(uint256 newNumber) public {
-        number = newNumber;
+contract Counter {
+    struct Storage {
+        bool init;
     }
 
-    function increment() public {
-        number++;
+    constructor() {
+        Storage storage $;
+        assembly {
+            $.slot := SOME_SLOT
+        }
+
+        $.init = true;
     }
 }
